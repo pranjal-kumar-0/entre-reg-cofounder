@@ -1,65 +1,229 @@
-import Image from "next/image";
+'use client';
+
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Send, Star, Paperclip } from 'lucide-react';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY || '';
+const EVENT_ID = '14feb'; 
 
 export default function Home() {
+  const [formData, setFormData] = useState({ name: '', regNum: '', email: '' });
+  const [status, setStatus] = useState('idle');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.regNum || !formData.email) {
+      console.log("Please fill in all fields!");
+      return;
+    }
+
+    // Validate email domain
+    if (!formData.email.endsWith('@vitapstudent.ac.in')) {
+      alert('Please use your VIT-AP student email (@vitapstudent.ac.in)');
+      return;
+    }
+
+    setStatus('loading');
+
+    try {
+      const response = await fetch(`${API_URL}/${EVENT_ID}/users`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': API_KEY,
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          reg_number: formData.regNum,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Failed to register');
+      }
+
+      setStatus('success');
+      
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error('Registration failed:', error);
+      alert(error.message || "Something went wrong. Check the console.");
+      setStatus('idle');
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <>
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Courier+Prime:wght@400;700&family=Gloria+Hallelujah&display=swap');
+        
+        .font-marker { font-family: 'Permanent Marker', cursive; }
+        .font-typewriter { font-family: 'Courier Prime', monospace; }
+        .font-hand { font-family: 'Gloria Hallelujah', cursive; }
+
+        .bg-grid-pattern {
+          background-color: #ffdeeb;
+          background-image: 
+            linear-gradient(#ffb3d1 1px, transparent 1px), 
+            linear-gradient(90deg, #ffb3d1 1px, transparent 1px);
+          background-size: 30px 30px;
+        }
+
+        .paper-tear {
+           clip-path: polygon(
+             0% 0%, 100% 0%, 100% 100%, 
+             95% 98%, 90% 100%, 85% 98%, 80% 100%, 75% 98%, 70% 100%, 
+             65% 98%, 60% 100%, 55% 98%, 50% 100%, 45% 98%, 40% 100%, 
+             35% 98%, 30% 100%, 25% 98%, 20% 100%, 15% 98%, 10% 100%, 
+             5% 98%, 0% 100%
+           );
+        }
+
+        .tape {
+          background-color: rgba(255, 255, 255, 0.4);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+          backdrop-filter: blur(2px);
+          border-left: 1px dashed rgba(0,0,0,0.1);
+          border-right: 1px dashed rgba(0,0,0,0.1);
+        }
+      `}</style>
+
+      <div className="min-h-screen w-full bg-grid-pattern flex items-center justify-center p-4 overflow-hidden relative">
+        
+        {/* Floating Background Doodles */}
+        <motion.div 
+           animate={{ rotate: [0, 10, 0] }} 
+           transition={{ duration: 5, repeat: Infinity }}
+           className="absolute top-10 left-10 w-24 h-24 bg-[#5cdbd3] rounded-full opacity-80 mix-blend-multiply filter blur-sm"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+        <motion.div 
+           animate={{ rotate: [0, -10, 0] }} 
+           transition={{ duration: 7, repeat: Infinity }}
+           className="absolute bottom-10 right-10 w-32 h-32 bg-[#ff85c0] rounded-full opacity-80 mix-blend-multiply filter blur-sm"
+        />
+
+        {/* --- THE MAIN SCRAPBOOK PAGE --- */}
+        <motion.div 
+          initial={{ y: 50, opacity: 0, rotate: -2 }}
+          animate={{ y: 0, opacity: 1, rotate: -1 }}
+          className="relative w-full max-w-lg"
+        >
+          <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-32 h-8 tape rotate-2 z-20"></div>
+
+          <div className="bg-[#fdfdfd] paper-tear pb-12 pt-8 px-8 shadow-xl relative z-10">
+            
+            <div className="mb-8 relative">
+              <div className="bg-[#2f2f2f] text-white inline-block px-3 py-1 transform -rotate-2 mb-2 shadow-[4px_4px_0px_rgba(0,0,0,0.2)]">
+                <span className="font-typewriter font-bold tracking-widest text-xs">ENTREPRENEURSHIP CLUB</span>
+              </div>
+              
+              <h1 className="text-5xl font-marker leading-[0.9] mt-2 text-[#222]">
+                Find Your <br/>
+                <span className="relative inline-block mt-2">
+                  <span className="relative z-10 text-[#ff4d4f]">CO-FOUNDER</span>
+                  <span className="absolute bottom-1 left-0 w-full h-4 bg-[#fffb8f] -z-0 -rotate-1 opacity-70"></span>
+                </span>
+              </h1>
+
+              <div className="absolute right-0 top-10 hidden sm:block">
+                 <svg width="60" height="40" viewBox="0 0 100 60">
+                   <path d="M10,10 Q50,5 80,40" fill="none" stroke="black" strokeWidth="2" strokeDasharray="5,5" />
+                   <path d="M80,40 L70,35 M80,40 L75,25" fill="none" stroke="black" strokeWidth="2" />
+                 </svg>
+                 <span className="font-hand text-xs rotate-12 block ml-12">register here!</span>
+              </div>
+            </div>
+
+            <div className="space-y-6 relative">
+               
+               <Paperclip className="absolute -right-4 -top-4 w-12 h-12 text-gray-400 rotate-45 opacity-50" />
+
+               {status === 'success' ? (
+                 <motion.div 
+                   initial={{ opacity: 0, scale: 0.8 }}
+                   animate={{ opacity: 1, scale: 1 }}
+                   className="bg-[#d9f7be] p-6 border-2 border-dashed border-[#52c41a] rotate-1 shadow-md text-center"
+                 >
+                   <div className="font-marker text-2xl mb-2 text-[#389e0d]">YOU&apos;RE IN!</div>
+                   <p className="font-typewriter text-sm text-[#222]">We will be waiting for you.</p>
+                 </motion.div>
+               ) : (
+                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                   
+                    <div className="relative group">
+                       <label className="font-hand text-sm font-bold ml-2 text-[#555]">Who are you?</label>
+                       <div className="bg-[#e6f7ff] p-1 shadow-[2px_2px_0px_rgba(0,0,0,0.1)] transform rotate-1 transition-transform group-focus-within:rotate-0 group-focus-within:scale-105">
+                          <input 
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            placeholder="NAME"
+                            className="w-full bg-transparent border-b-2 border-[#91d5ff] font-typewriter p-2 focus:outline-none focus:border-[#1890ff] placeholder:text-[#1890ff]/40"
+                          />
+                       </div>
+                    </div>
+
+                    <div className="relative group">
+                       <label className="font-hand text-sm font-bold ml-2 text-[#555]">Your ID?</label>
+                       <div className="bg-[#fff0f6] p-1 shadow-[2px_2px_0px_rgba(0,0,0,0.1)] transform -rotate-1 transition-transform group-focus-within:rotate-0 group-focus-within:scale-105">
+                          <input 
+                            name="regNum"
+                            value={formData.regNum}
+                            onChange={handleChange}
+                            placeholder="REG NUMBER"
+                            className="w-full bg-transparent border-b-2 border-[#ffadd2] font-typewriter p-2 focus:outline-none focus:border-[#eb2f96] placeholder:text-[#eb2f96]/40"
+                          />
+                       </div>
+                    </div>
+
+                    <div className="relative group">
+                       <label className="font-hand text-sm font-bold ml-2 text-[#555]">Email?</label>
+                       <div className="bg-[#fff7e6] p-1 shadow-[2px_2px_0px_rgba(0,0,0,0.1)] transform rotate-1 transition-transform group-focus-within:rotate-0 group-focus-within:scale-105">
+                          <input 
+                            name="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="CAMPUS MAIL"
+                            pattern=".*@vitapstudent\.ac\.in$"
+                            title="Please use your VIT-AP student email (@vitapstudent.ac.in)"
+                            className="w-full bg-transparent border-b-2 border-[#ffd591] font-typewriter p-2 focus:outline-none focus:border-[#fa8c16] placeholder:text-[#fa8c16]/40"
+                          />
+                       </div>
+                    </div>
+
+                    <button 
+                      disabled={status === 'loading'}
+                      className="mt-4 self-center group relative disabled:opacity-70"
+                    >
+                      <div className="absolute inset-0 bg-black rounded-full translate-y-1 translate-x-1 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform"></div>
+                      <div className="relative bg-[#ff4d4f] text-white border-2 border-black px-8 py-3 rounded-full font-marker text-xl tracking-widest flex items-center gap-2 hover:-translate-y-1 transition-transform">
+                        {status === 'loading' ? 'SAVING...' : 'SEND IT'} 
+                        <Send className="w-4 h-4" />
+                      </div>
+                    </button>
+
+                 </form>
+               )}
+            </div>
+
+            <div className="absolute -bottom-4 right-12 w-24 h-8 tape -rotate-3 z-20"></div>
+          </div>
+        </motion.div>
+
+        <div className="absolute bottom-4 left-4 font-typewriter text-[10px] text-gray-400">
+           SCRAPBOOK_VER_1.0
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+    </>
   );
 }
