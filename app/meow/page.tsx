@@ -10,6 +10,11 @@ interface User {
   name: string;
   email: string;
   created_at: string;
+  gender?: string;
+  age?: number;
+  interest?: string;
+  one_line?: string;
+  one_thing_to_look_for?: string;
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -21,14 +26,20 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  
   const copyToCSV = () => {
     // Create TSV format (Tab-Separated Values) for Excel
-    const headers = ['#', 'Name', 'Reg Number', 'Email'];
+    const headers = ['#', 'Name', 'Reg Number', 'Email', 'Gender', 'Age', 'Interest', 'One Line', 'Looking For'];
     const rows = users.map((user, index) => [
       index + 1,
       user.name,
       user.reg_number,
-      user.email
+      user.email,
+      user.gender || '',
+      user.age || '',
+      user.interest || '',
+      user.one_line || '',
+      user.one_thing_to_look_for || ''
     ]);
 
     // Use tabs instead of commas for proper Excel cell separation
@@ -77,10 +88,11 @@ const Page = () => {
 
     fetchUsers();
   }, []);
+  
   return (
     <div className="min-h-screen bg-[#fff0f6] p-8 font-mono">
       {/* Header */}
-      <div className="max-w-4xl mx-auto mb-8 border-b-2 border-black pb-4 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto mb-8 border-b-2 border-black pb-4 flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold uppercase tracking-tighter">
             Event Roster: {EVENT_ID}
@@ -122,14 +134,14 @@ const Page = () => {
 
       {/* Error State */}
       {error && (
-        <div className="bg-red-100 border-2 border-red-500 text-red-700 p-4 max-w-4xl mx-auto">
+        <div className="bg-red-100 border-2 border-red-500 text-red-700 p-4 max-w-7xl mx-auto">
           Error: {error}
         </div>
       )}
 
       {/* Data Table / List */}
       {!loading && !error && (
-        <div className="max-w-4xl mx-auto bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div className="max-w-7xl mx-auto bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           
           {users.length === 0 ? (
             <div className="p-8 text-center text-gray-400">No one has registered yet...</div>
@@ -142,6 +154,11 @@ const Page = () => {
                     <th className="p-4 border-b-2 border-black">Name</th>
                     <th className="p-4 border-b-2 border-black">Reg Number</th>
                     <th className="p-4 border-b-2 border-black">Email</th>
+                    <th className="p-4 border-b-2 border-black">Gender</th>
+                    <th className="p-4 border-b-2 border-black">Age</th>
+                    <th className="p-4 border-b-2 border-black">Interest</th>
+                    <th className="p-4 border-b-2 border-black">One Line</th>
+                    <th className="p-4 border-b-2 border-black">Looking For</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -154,6 +171,11 @@ const Page = () => {
                       <td className="p-4 font-bold text-black">{user.name}</td>
                       <td className="p-4 text-pink-600 font-mono">{user.reg_number}</td>
                       <td className="p-4 text-gray-600">{user.email}</td>
+                      <td className="p-4 text-gray-600 uppercase">{user.gender || '-'}</td>
+                      <td className="p-4 text-gray-600">{user.age || '-'}</td>
+                      <td className="p-4 text-gray-600">{user.interest || '-'}</td>
+                      <td className="p-4 text-gray-600 max-w-xs truncate" title={user.one_line}>{user.one_line || '-'}</td>
+                      <td className="p-4 text-gray-600 max-w-xs truncate" title={user.one_thing_to_look_for}>{user.one_thing_to_look_for || '-'}</td>
                     </tr>
                   ))}
                 </tbody>
