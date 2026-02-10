@@ -15,6 +15,7 @@ interface User {
   interest?: string;
   one_line?: string;
   one_thing_to_look_for?: string;
+  insta_id?: string;
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -26,10 +27,9 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
-  
-  const copyToCSV = () => {
+    const copyToCSV = () => {
     // Create TSV format (Tab-Separated Values) for Excel
-    const headers = ['#', 'Name', 'Reg Number', 'Email', 'Gender', 'Age', 'Interest', 'One Line', 'Looking For'];
+    const headers = ['#', 'Name', 'Reg Number', 'Email', 'Gender', 'Age', 'Interest', 'One Line', 'Looking For', 'Instagram'];
     const rows = users.map((user, index) => [
       index + 1,
       user.name,
@@ -39,7 +39,8 @@ const Page = () => {
       user.age || '',
       user.interest || '',
       user.one_line || '',
-      user.one_thing_to_look_for || ''
+      user.one_thing_to_look_for || '',
+      user.insta_id || ''
     ]);
 
     // Use tabs instead of commas for proper Excel cell separation
@@ -148,8 +149,7 @@ const Page = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-black text-white text-sm uppercase">
+                <thead>                  <tr className="bg-black text-white text-sm uppercase">
                     <th className="p-4 border-b-2 border-black">#</th>
                     <th className="p-4 border-b-2 border-black">Name</th>
                     <th className="p-4 border-b-2 border-black">Reg Number</th>
@@ -159,6 +159,7 @@ const Page = () => {
                     <th className="p-4 border-b-2 border-black">Interest</th>
                     <th className="p-4 border-b-2 border-black">One Line</th>
                     <th className="p-4 border-b-2 border-black">Looking For</th>
+                    <th className="p-4 border-b-2 border-black">Instagram</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -172,10 +173,10 @@ const Page = () => {
                       <td className="p-4 text-pink-600 font-mono">{user.reg_number}</td>
                       <td className="p-4 text-gray-600">{user.email}</td>
                       <td className="p-4 text-gray-600 uppercase">{user.gender || '-'}</td>
-                      <td className="p-4 text-gray-600">{user.age || '-'}</td>
-                      <td className="p-4 text-gray-600">{user.interest || '-'}</td>
+                      <td className="p-4 text-gray-600">{user.age || '-'}</td>                      <td className="p-4 text-gray-600">{user.interest || '-'}</td>
                       <td className="p-4 text-gray-600 max-w-xs truncate" title={user.one_line}>{user.one_line || '-'}</td>
                       <td className="p-4 text-gray-600 max-w-xs truncate" title={user.one_thing_to_look_for}>{user.one_thing_to_look_for || '-'}</td>
+                      <td className="p-4 text-gray-600">{user.insta_id || '-'}</td>
                     </tr>
                   ))}
                 </tbody>

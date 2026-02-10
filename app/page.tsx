@@ -17,7 +17,8 @@ export default function Home() {
     age: '',
     interest: '',
     oneLine: '',
-    oneThingToLookFor: ''
+    oneThingToLookFor: '',
+    instaId: ''
   });
   const [status, setStatus] = useState('idle');
 
@@ -27,7 +28,7 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.regNum || !formData.email || !formData.gender || !formData.age || !formData.interest || !formData.oneLine || !formData.oneThingToLookFor) {
+    if (!formData.name || !formData.regNum || !formData.email || !formData.gender || !formData.age || !formData.interest || !formData.oneLine || !formData.oneThingToLookFor || !formData.instaId) {
       alert("Please fill in all fields!");
       return;
     }
@@ -56,6 +57,7 @@ export default function Home() {
           interest: formData.interest,
           one_line: formData.oneLine,
           one_thing_to_look_for: formData.oneThingToLookFor,
+          insta_id: formData.instaId,
         }),
       });
 
@@ -284,6 +286,19 @@ export default function Home() {
                             placeholder="WHAT YOU SEEK"
                             rows={2}
                             className="w-full bg-transparent border-b-2 border-[#adc6ff] font-typewriter p-2 focus:outline-none focus:border-[#2f54eb] placeholder:text-[#2f54eb]/40 resize-none"
+                          />
+                       </div>
+                    </div>
+
+                    <div className="relative group">
+                       <label className="font-hand text-sm font-bold ml-2 text-[#555]">Instagram ID</label>
+                       <div className="bg-[#fff0f6] p-1 shadow-[2px_2px_0px_rgba(0,0,0,0.1)] transform rotate-1 transition-transform group-focus-within:rotate-0 group-focus-within:scale-105">
+                          <input 
+                            name="instaId"
+                            value={formData.instaId}
+                            onChange={handleChange}
+                            placeholder="@USERNAME"
+                            className="w-full bg-transparent border-b-2 border-[#ffadd2] font-typewriter p-2 focus:outline-none focus:border-[#eb2f96] placeholder:text-[#eb2f96]/40"
                           />
                        </div>
                     </div>
