@@ -4,22 +4,31 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Star, Paperclip } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ;
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY || '';
 const EVENT_ID = '14feb'; 
 
 export default function Home() {
-  const [formData, setFormData] = useState({ name: '', regNum: '', email: '' });
+  const [formData, setFormData] = useState({ 
+    name: '', 
+    regNum: '', 
+    email: '',
+    gender: '',
+    age: '',
+    interest: '',
+    oneLine: '',
+    oneThingToLookFor: ''
+  });
   const [status, setStatus] = useState('idle');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.regNum || !formData.email) {
-      console.log("Please fill in all fields!");
+    if (!formData.name || !formData.regNum || !formData.email || !formData.gender || !formData.age || !formData.interest || !formData.oneLine || !formData.oneThingToLookFor) {
+      alert("Please fill in all fields!");
       return;
     }
 
@@ -42,6 +51,11 @@ export default function Home() {
           name: formData.name,
           email: formData.email,
           reg_number: formData.regNum,
+          gender: formData.gender,
+          age: parseInt(formData.age),
+          interest: formData.interest,
+          one_line: formData.oneLine,
+          one_thing_to_look_for: formData.oneThingToLookFor,
         }),
       });
 
@@ -99,7 +113,6 @@ export default function Home() {
 
       <div className="min-h-screen w-full bg-grid-pattern flex items-center justify-center p-4 overflow-hidden relative">
         
-        {/* Floating Background Doodles */}
         <motion.div 
            animate={{ rotate: [0, 10, 0] }} 
            transition={{ duration: 5, repeat: Infinity }}
@@ -111,7 +124,6 @@ export default function Home() {
            className="absolute bottom-10 right-10 w-32 h-32 bg-[#ff85c0] rounded-full opacity-80 mix-blend-multiply filter blur-sm"
         />
 
-        {/* --- THE MAIN SCRAPBOOK PAGE --- */}
         <motion.div 
           initial={{ y: 50, opacity: 0, rotate: -2 }}
           animate={{ y: 0, opacity: 1, rotate: -1 }}
@@ -160,7 +172,7 @@ export default function Home() {
                  <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                    
                     <div className="relative group">
-                       <label className="font-hand text-sm font-bold ml-2 text-[#555]">Who are you?</label>
+                       <label className="font-hand text-sm font-bold ml-2 text-[#555]">Your Name</label>
                        <div className="bg-[#e6f7ff] p-1 shadow-[2px_2px_0px_rgba(0,0,0,0.1)] transform rotate-1 transition-transform group-focus-within:rotate-0 group-focus-within:scale-105">
                           <input 
                             name="name"
@@ -173,7 +185,7 @@ export default function Home() {
                     </div>
 
                     <div className="relative group">
-                       <label className="font-hand text-sm font-bold ml-2 text-[#555]">Your ID?</label>
+                       <label className="font-hand text-sm font-bold ml-2 text-[#555]">Your ID</label>
                        <div className="bg-[#fff0f6] p-1 shadow-[2px_2px_0px_rgba(0,0,0,0.1)] transform -rotate-1 transition-transform group-focus-within:rotate-0 group-focus-within:scale-105">
                           <input 
                             name="regNum"
@@ -186,7 +198,7 @@ export default function Home() {
                     </div>
 
                     <div className="relative group">
-                       <label className="font-hand text-sm font-bold ml-2 text-[#555]">Email?</label>
+                       <label className="font-hand text-sm font-bold ml-2 text-[#555]">Email</label>
                        <div className="bg-[#fff7e6] p-1 shadow-[2px_2px_0px_rgba(0,0,0,0.1)] transform rotate-1 transition-transform group-focus-within:rotate-0 group-focus-within:scale-105">
                           <input 
                             name="email"
@@ -197,6 +209,81 @@ export default function Home() {
                             pattern=".*@vitapstudent\.ac\.in$"
                             title="Please use your VIT-AP student email (@vitapstudent.ac.in)"
                             className="w-full bg-transparent border-b-2 border-[#ffd591] font-typewriter p-2 focus:outline-none focus:border-[#fa8c16] placeholder:text-[#fa8c16]/40"
+                          />
+                       </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="relative group">
+                        <label className="font-hand text-sm font-bold ml-2 text-[#555]">Gender?</label>
+                        <div className="bg-[#f9f0ff] p-1 shadow-[2px_2px_0px_rgba(0,0,0,0.1)] transform -rotate-1 transition-transform group-focus-within:rotate-0 group-focus-within:scale-105">
+                          <select
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleChange}
+                            className="w-full bg-transparent border-b-2 border-[#d3adf7] font-typewriter p-2 focus:outline-none focus:border-[#722ed1] text-[#722ed1]"
+                          >
+                            <option value="">SELECT</option>
+                            <option value="male">MALE</option>
+                            <option value="female">FEMALE</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="relative group">
+                        <label className="font-hand text-sm font-bold ml-2 text-[#555]">Age?</label>
+                        <div className="bg-[#e6fffb] p-1 shadow-[2px_2px_0px_rgba(0,0,0,0.1)] transform rotate-1 transition-transform group-focus-within:rotate-0 group-focus-within:scale-105">
+                          <input
+                            name="age"
+                            type="number"
+                            min="1"
+                            max="150"
+                            value={formData.age}
+                            onChange={handleChange}
+                            placeholder="AGE"
+                            className="w-full bg-transparent border-b-2 border-[#87e8de] font-typewriter p-2 focus:outline-none focus:border-[#13c2c2] placeholder:text-[#13c2c2]/40"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="relative group">
+                       <label className="font-hand text-sm font-bold ml-2 text-[#555]">Your Interest?</label>
+                       <div className="bg-[#fff1f0] p-1 shadow-[2px_2px_0px_rgba(0,0,0,0.1)] transform -rotate-1 transition-transform group-focus-within:rotate-0 group-focus-within:scale-105">
+                          <input 
+                            name="interest"
+                            value={formData.interest}
+                            onChange={handleChange}
+                            placeholder="INTEREST"
+                            className="w-full bg-transparent border-b-2 border-[#ffccc7] font-typewriter p-2 focus:outline-none focus:border-[#f5222d] placeholder:text-[#f5222d]/40"
+                          />
+                       </div>
+                    </div>
+
+                    <div className="relative group">
+                       <label className="font-hand text-sm font-bold ml-2 text-[#555]">Describe yourself in one line</label>
+                       <div className="bg-[#fcffe6] p-1 shadow-[2px_2px_0px_rgba(0,0,0,0.1)] transform rotate-1 transition-transform group-focus-within:rotate-0 group-focus-within:scale-105">
+                          <textarea
+                            name="oneLine"
+                            value={formData.oneLine}
+                            onChange={handleChange}
+                            placeholder="ONE LINE ABOUT YOU"
+                            rows={2}
+                            className="w-full bg-transparent border-b-2 border-[#eaff8f] font-typewriter p-2 focus:outline-none focus:border-[#a0d911] placeholder:text-[#a0d911]/40 resize-none"
+                          />
+                       </div>
+                    </div>
+
+                    <div className="relative group">
+                       <label className="font-hand text-sm font-bold ml-2 text-[#555]">One thing you look for in a co-founder</label>
+                       <div className="bg-[#f0f5ff] p-1 shadow-[2px_2px_0px_rgba(0,0,0,0.1)] transform -rotate-1 transition-transform group-focus-within:rotate-0 group-focus-within:scale-105">
+                          <textarea
+                            name="oneThingToLookFor"
+                            value={formData.oneThingToLookFor}
+                            onChange={handleChange}
+                            placeholder="WHAT YOU SEEK"
+                            rows={2}
+                            className="w-full bg-transparent border-b-2 border-[#adc6ff] font-typewriter p-2 focus:outline-none focus:border-[#2f54eb] placeholder:text-[#2f54eb]/40 resize-none"
                           />
                        </div>
                     </div>
